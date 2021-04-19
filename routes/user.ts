@@ -4,19 +4,35 @@ let userController = new UserController();
 
 const router = express.Router();
 
-router.get("/get/:email", async(req, res) =>{
-    res.send(await userController.getUser(req.params.id));
+router.get("/:email", async(req, res) =>{
+    res.send(await userController.getUser(req.params.email));
 })
 
-router.post("/new", async(req,res) =>{
-    console.log(req.body);
+router.post("/", async(req,res) =>{
     try {
         let user = await userController.createUser(req.body.email, req.body.name);
         res.send(user);
     } catch (error) {
         res.send(error);
     }
-  
+})
+
+router.put("/", async (req, res) => {
+    try {
+        let user = await userController.modifyUserName(req.body.email, req.body.name);
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+})
+
+router.delete("/", async(req, res) => {
+    try {
+        await userController.deleteUser(req.body.email);
+        res.status(200).send("User Deleted");
+    } catch (error) {
+        res.status(500).send("Error deleting user");
+    }
 })
 
 module.exports = router;

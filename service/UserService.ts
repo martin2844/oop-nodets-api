@@ -4,10 +4,6 @@ import UserSchema from '../schema/UserSchema';
 
 export class UserService implements UserRepository{
 
-    constructor(){
-
-    }
-
      async getUser(email: string): Promise<User> {
         let userData = await UserSchema.findOne({email: email});
         const user = new User(userData.name, userData.email);
@@ -23,5 +19,15 @@ export class UserService implements UserRepository{
         const user = new User(newUser.name, newUser.email);
         return user;
     }
-  
+    
+    async deleteUser(email: string): Promise<void> {
+       await UserSchema.deleteOne({email: email});
+    }
+
+    async modifyUserName(email: string, name: string): Promise<User> {
+        let user = await UserSchema.findOne({email: email});
+        user.name = name;
+        await user.save();
+        return new User(user.name, user.email);
+    }
 }
